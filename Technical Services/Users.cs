@@ -15,9 +15,57 @@ namespace Authentication_Lab.Technical_Services
         public void AddUser (User user)
         {
             SqlConnection DataSource = new SqlConnection();
-            DataSource.ConnectionString = @"";
+            DataSource.ConnectionString = @"Persist Security Info=False; Database=ptrninkov1;User ID=ptrninkov1;Password=xxxxx;server=dev1.baist.ca";
+            DataSource.Open();
+
+            SqlCommand AddUser = new SqlCommand()
+            {
+                Connection = DataSource,
+                CommandType = CommandType.StoredProcedure,
+                CommandText = "BAIS3110"
+            };
+
+            SqlParameter parameter = new()
+            {
+                ParameterName = "Username",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Value = user.Username
+            };
+            AddUser.Parameters.Add(parameter);
+
+            parameter = new()
+            {
+                ParameterName = "Email",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Value = user.Email
+            };
+            AddUser.Parameters.Add(parameter);
 
             user.Password = Hash(user.Password);
+
+            parameter = new()
+            {
+                ParameterName = "Password",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Value = user.Password
+            };
+            AddUser.Parameters.Add(parameter);
+
+            parameter = new()
+            {
+                ParameterName = "Role",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Value = user.Role
+            };
+            AddUser.Parameters.Add(parameter);
+
+            AddUser.ExecuteNonQuery();
+
+            DataSource.Close();
         }
 
 
